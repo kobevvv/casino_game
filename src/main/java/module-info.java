@@ -10,7 +10,9 @@ module org.example.casino_game {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens org.example.casino_game to javafx.fxml;
     exports org.example.casino_game;
+    exports org.example.casino_game.videopoker;
 }
