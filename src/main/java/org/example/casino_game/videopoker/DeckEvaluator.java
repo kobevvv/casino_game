@@ -82,7 +82,7 @@ public class DeckEvaluator {
     }
 
     protected boolean isThreeOfAKind() {
-        return maxOfSameSuit() >= 3;
+        return maxOfSameNumber() >= 3;
     }
 
     protected boolean isTwoPair() {

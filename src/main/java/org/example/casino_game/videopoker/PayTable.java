@@ -28,15 +28,21 @@ public enum PayTable {
         this.name = name;
     }
 
-    public static String payTableString() {
-        StringBuilder builder = new StringBuilder();
-        List<PayTable> payTables = List.of(PayTable.values());
-        for (PayTable payTable : payTables) {
-            builder.append(payTable.name());
-            builder.append(" x");
-            builder.append(payTable.multiplier);
-            builder.append("\n");
+    public String payTableString() {
+        int maxNameLength = 0;
+        for (PayTable payTable : PayTable.values()) {
+            maxNameLength = Math.max(maxNameLength, payTable.name.length());
         }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("| %-" + maxNameLength + "s\t| Multiplier |%n", "Hand"));
+        builder.append(String.format("| %-" + maxNameLength + "s\t| --------- |%n", "---"));
+
+        for (PayTable payTable : PayTable.values()) {
+            String handName = payTable == this ? "\t > \t" + payTable.name : payTable.name;
+            builder.append(String.format("| %-" + maxNameLength + "s\t| %d |%n", handName, payTable.multiplier));
+        }
+
         return builder.toString();
     }
 
