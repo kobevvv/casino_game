@@ -14,41 +14,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
+import static org.example.casino_game.videopoker.VideoPokerManager.AMOUNT_OF_CARDS;
 
 public class VideoPokerApplication extends Application {
 
     private final static int SCENE_LENGTH = 900;
     private final static int SCENE_WIDTH = 750;
-    private final static int AMOUNT_OF_CARDS = 5;
-    private ArrayList<Card> cards = new ArrayList<>();
-    private ArrayList<Integer> selectedCards = new ArrayList<>();
     private Image cross = new Image(getClass().getResource("/images/red_cross.png").toExternalForm());
+    private String currentCombination;
+    private VideoPokerManager manager = new VideoPokerManager();
 
     @Override
     public void start(Stage stage) {
-
-        // insert game logic
-
-        // give some initial cards
-        Card card = new Card(9, Suit.HEART);
-        Card card2 = new Card(10, Suit.SPADE);
-        Card card3 = new Card(8, Suit.DIAMOND);
-        Card card4 = new Card(13, Suit.CLUBS);
-        Card card5 = new Card(12, Suit.SPADE);
-
-        // save the cards
-        cards = new ArrayList<>();
-        cards.add(card);
-        cards.add(card2);
-        cards.add(card3);
-        cards.add(card4);
-        cards.add(card5);
-
-        // start with no cards selected
-        for (int i = 0; i < 5; i++) {
-            selectedCards.add(0);
-        }
+        manager = new VideoPokerManager();
+        manager.start();
 
         renderScene(stage);
     }
@@ -56,9 +35,16 @@ public class VideoPokerApplication extends Application {
     private void renderScene(Stage stage) {
         VBox root = new VBox();
 
-        // display current combination + score
         Label label = new Label("You're playing video poker!");
         root.getChildren().add(label);
+
+        // display current combination
+        Label currentCombinationLabel = new Label("Current combination: " + manager.getCurrentCombination());
+        root.getChildren().add(currentCombinationLabel);
+
+        // display current score
+        Label score = new Label("Score: ...");
+        root.getChildren().add(score);
 
         // display cards
         HBox cards = new HBox();
@@ -73,6 +59,12 @@ public class VideoPokerApplication extends Application {
             public void handle(ActionEvent e)
             {
                 System.out.println("Confirm delete");
+                try {
+                    manager.removeSelectedCards();
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+                renderScene(stage);
             }
         };
         b1.setOnAction(event1);
@@ -84,6 +76,8 @@ public class VideoPokerApplication extends Application {
             public void handle(ActionEvent e)
             {
                 System.out.println("Paytable info");
+                System.out.println(PayTable.payTableString());
+                renderScene(stage);
             }
         };
         b2.setOnAction(event2);
@@ -97,7 +91,7 @@ public class VideoPokerApplication extends Application {
     }
 
     private StackPane renderCard(Stage stage, int index) {
-        Image image = new Image(getClass().getResource(cards.get(index).getImagePath()).toExternalForm());
+        Image image = new Image(getClass().getResource(manager.getCurrentCards().get(index).getImagePath()).toExternalForm());
 
         ImageView imageView = new ImageView(image);
 
@@ -109,9 +103,8 @@ public class VideoPokerApplication extends Application {
         Rectangle clickableArea = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
         clickableArea.setFill(javafx.scene.paint.Color.TRANSPARENT);
         clickableArea.setOnMouseClicked((event) -> {
-            System.out.println("You clicked on " + event.getX() + ", " + event.getY());
-            // change the card when clicked
-            selectedCards.set(index, selectedCards.get(index) + 1);
+            System.out.println("You clicked on card " + (index + 1));
+            manager.selectCard(index);
             renderScene(stage);
         });
 
@@ -121,7 +114,7 @@ public class VideoPokerApplication extends Application {
         StackPane pane = new StackPane();
         pane.getChildren().add(imageView);
 
-        if (selectedCards.get(index) % 2 == 1) {
+        if (manager.isCardSelected(index)) {
             ImageView crossView = new ImageView(cross);
             crossView.setFitHeight(SCENE_LENGTH/10);
             crossView.setFitWidth(SCENE_WIDTH/10);
