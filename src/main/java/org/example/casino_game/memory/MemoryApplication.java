@@ -28,6 +28,9 @@ public class MemoryApplication extends Application {
     private ArrayList<MemoryCard> cards = new ArrayList<>();
     private int selectedCard1 = -1;
     private int selectedCard2 = -1;
+    private int tries = 0;
+    private int points = 0;
+    private boolean wait = false;
 
     public void start(Stage stage){
         MemoryCard queenClubs1 = new MemoryCard(12, Suit.CLUBS, false, false);
@@ -57,6 +60,10 @@ public class MemoryApplication extends Application {
         VBox root = new VBox();
         Label label = new Label("You're playing memory!");
         root.getChildren().add(label);
+        Label triesLabel = new Label("Tries: " + tries);
+        root.getChildren().add(triesLabel);
+        Label pointsLabel = new Label("¨Points: " + points);
+        root.getChildren().add(pointsLabel);
 
         HBox hbox = new HBox();
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
@@ -69,6 +76,23 @@ public class MemoryApplication extends Application {
         stage.setTitle("Casino game - Memory");
         stage.setScene(new Scene(root, SCENE_LENGTH, SCENE_WIDTH));
         stage.show();
+
+        if (selectedCard1 != -1 && selectedCard2 != -1 && cards.get(selectedCard1).equals(cards.get(selectedCard2))){
+            wait = false;
+        }
+        else if (wait){
+            wait = false;
+            cards.get(selectedCard1).setTurned(false);
+            cards.get(selectedCard2).setTurned(false);
+            selectedCard1 = -1;
+            selectedCard2 = -1;
+            try{
+                Thread.sleep(2000);
+            } catch(InterruptedException e){
+                System.out.println("FOUT: DE DELAY IS ONDERBROKEN");
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private StackPane renderCard(Stage stage, MemoryCard card, int index){
@@ -93,13 +117,24 @@ public class MemoryApplication extends Application {
             else if (selectedCard2 == -1) {
                 selectedCard2 = index;
                 card.setTurned(true);
-                if (cards.get(selectedCard1) == cards.get(index)){
+                tries++;
+                if (cards.get(selectedCard1).equals(card)){
+                    // paar gevonden
                     cards.get(selectedCard1).found();
                     cards.get(index).found();
+                    points++;
+                }
+                else{
+                    // foute combinatie
+                    wait = true;
                 }
             }
             else {
-
+                if (cards.get(selectedCard1).equals(cards.get(selectedCard2))){
+                    wait = false;
+                    selectedCard1 = -1;
+                    selectedCard2 = -1;
+                }
             }
             renderScene(stage);
         });
