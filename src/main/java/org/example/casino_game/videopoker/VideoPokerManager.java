@@ -6,6 +6,8 @@ import org.example.casino_game.Card;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.casino_game.StatsController.*;
+
 public class VideoPokerManager {
 
     protected final static int START_CREDIT = 100;
@@ -14,15 +16,13 @@ public class VideoPokerManager {
     private ArrayList<Card> deck = new ArrayList<>();
     private Card[] currentCards = new Card[AMOUNT_OF_CARDS];
     private ArrayList<Integer> selectedCards = new ArrayList<>();
-    private int credits;
     private int betSize;
 
     // state of the game
     private boolean betPlaced = false;
-    private boolean cardsSwapped = false;
+    private boolean roundFinished = false;
 
     public VideoPokerManager() {
-        this.credits = START_CREDIT;
         initializeNewRound();
     }
 
@@ -38,19 +38,19 @@ public class VideoPokerManager {
 
         this.betPlaced = false;
         this.betSize = 1;
-        this.cardsSwapped = false;
+        this.roundFinished = false;
     }
 
     public void setBetSize(int betSize) {
         if (betSize > MAX_BETSIZE) {
             throw new IllegalArgumentException("Bet size can't be greater than " + MAX_BETSIZE);
         }
-        if (betSize > credits) {
-            throw new IllegalArgumentException("You don't have enough credits, you only have " + credits + " credits");
+        if (betSize > getCoins()) {
+            throw new IllegalArgumentException("You don't have enough coins, you only have " + getCoins() + " coins");
         }
         this.betPlaced = true;
         this.betSize = betSize;
-        this.credits -= betSize;
+        decrementCoins(betSize);
     }
 
     public int getBetSize() {
@@ -61,12 +61,8 @@ public class VideoPokerManager {
         return this.betPlaced;
     }
 
-    public boolean isCardsSwapped() {
-        return this.cardsSwapped;
-    }
-
-    public String getCreditsString() {
-        return ((Integer) credits).toString();
+    public boolean isRoundFinished() {
+        return this.roundFinished;
     }
 
     private PayTable getCurrentPayTable() {
@@ -91,7 +87,7 @@ public class VideoPokerManager {
     }
 
     public void removeSelectedCards() throws Exception {
-        if (cardsSwapped) {
+        if (roundFinished) {
             throw new Exception("You already drew new cards");
         }
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
@@ -110,7 +106,7 @@ public class VideoPokerManager {
         }
 
         // finish the round
-        this.cardsSwapped = true;
+        this.roundFinished = true;
         updateCredit();
     }
 
@@ -121,7 +117,12 @@ public class VideoPokerManager {
     protected void updateCredit() {
         int bet = getBetSize();
         int payOut = getCurrentPayTable().multiplier;
-        this.credits = this.credits + bet * payOut;
+        incrementCoins(bet * payOut);
+        gainXP(payOut);
+    }
+
+    public int getXPGained() {
+        return getCurrentPayTable().multiplier;
     }
 
 }

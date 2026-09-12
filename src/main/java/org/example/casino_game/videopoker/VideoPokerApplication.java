@@ -19,6 +19,7 @@ import org.example.casino_game.MainMenu;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.example.casino_game.StatsController.getCoins;
 import static org.example.casino_game.videopoker.VideoPokerManager.AMOUNT_OF_CARDS;
 
 public class VideoPokerApplication extends Application {
@@ -48,12 +49,12 @@ public class VideoPokerApplication extends Application {
         root.getChildren().add(displayCards(stage));
 
         // confirm button
-        if (manager.isBetPlaced() && !manager.isCardsSwapped()) {
+        if (manager.isBetPlaced() && !manager.isRoundFinished()) {
             root.getChildren().add(confirmButton(stage));
         }
 
         // play again button
-        if (manager.isCardsSwapped()) {
+        if (manager.isRoundFinished()) {
             root.getChildren().add(playAgainButton(stage));
         }
 
@@ -68,8 +69,14 @@ public class VideoPokerApplication extends Application {
         root.getChildren().add(bet);
 
         // display amount of credits
-        Label score = new Label("Credits: " + manager.getCreditsString());
-        root.getChildren().add(score);
+        Label coins = new Label("Credits: " + getCoins());
+        root.getChildren().add(coins);
+
+        // display received xp
+        if (manager.isRoundFinished()) {
+            Label xp = new Label("+ " + manager.getXPGained() + " XP");
+            root.getChildren().add(xp);
+        }
 
         root.setStyle("-fx-background-color: pink;");
 
@@ -222,7 +229,7 @@ public class VideoPokerApplication extends Application {
             pane.getChildren().add(crossView);
         }
 
-        if (!manager.isCardsSwapped()) {
+        if (!manager.isRoundFinished()) {
             // create a clickable area
             Rectangle clickableArea = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
             clickableArea.setFill(javafx.scene.paint.Color.TRANSPARENT);

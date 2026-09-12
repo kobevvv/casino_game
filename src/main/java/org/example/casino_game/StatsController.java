@@ -18,6 +18,10 @@ public class StatsController {
         else throw new OutOfCoinsException("NIET GENOEG COINS!");
     }
 
+    public static int getCoins() {
+        return getStats(0);
+    }
+
     public static void gainTrophies(int amount){
         writeStats(1, getStats(1) + amount);
     }
@@ -28,8 +32,16 @@ public class StatsController {
         else writeStats(1, 0);
     }
 
+    public static int getTrophies() {
+        return getStats(1);
+    }
+
     public static void gainXP(int amount){
         writeStats(2, getStats(2) + amount);
+    }
+
+    public static int getXP() {
+        return getStats(2);
     }
 
     public static int getStats(int line){
