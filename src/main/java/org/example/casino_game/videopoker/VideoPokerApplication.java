@@ -10,10 +10,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.example.casino_game.Card;
-import org.example.casino_game.Suit;
+import org.example.casino_game.MainMenu;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.example.casino_game.videopoker.VideoPokerManager.AMOUNT_OF_CARDS;
 
@@ -36,84 +40,30 @@ public class VideoPokerApplication extends Application {
     private void renderScene(Stage stage) {
         VBox root = new VBox();
 
+        root.getChildren().add(quitButton(stage));
+
         // display paytable
         Label paytableLabel = new Label(manager.getPayTable());
         root.getChildren().add(paytableLabel);
 
         // display cards
-        HBox cards = new HBox();
-        for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
-            cards.getChildren().add(renderCard(stage, i));
-        }
-        root.getChildren().add(cards);
+        root.getChildren().add(displayCards(stage));
 
+        // confirm button
         if (manager.isBetPlaced() && !manager.isCardsSwapped()) {
-            // confirm button
-            Button b1 = new Button("Confirm delete");
-            EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e)
-                {
-                    System.out.println("Confirm delete");
-                    try {
-                        manager.removeSelectedCards();
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                    }
-                    renderScene(stage);
-                }
-            };
-            b1.setOnAction(event1);
-            root.getChildren().add(b1);
+            root.getChildren().add(confirmButton(stage));
         }
 
+        // play again button
         if (manager.isCardsSwapped()) {
-            // next round button
-            Button b1 = new Button("Play again");
-            EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e)
-                {
-                    System.out.println("New round started");
-                    manager.initializeNewRound();
-                    renderScene(stage);
-                }
-            };
-            b1.setOnAction(event1);
-            root.getChildren().add(b1);
+            root.getChildren().add(playAgainButton(stage));
         }
 
-        // create a menu to choose bet
-        MenuButton m = new MenuButton("Choose bet size");
-
-        MenuItem m1 = new MenuItem("1");
-        MenuItem m2 = new MenuItem("2");
-        MenuItem m3 = new MenuItem("3");
-        MenuItem m4 = new MenuItem("4");
-        MenuItem m5 = new MenuItem("5");
-
-        m.getItems().add(m1);
-        m.getItems().add(m2);
-        m.getItems().add(m3);
-        m.getItems().add(m4);
-        m.getItems().add(m5);
-
-        // create events for menu items
-        // action event
-        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e)
-            {
-                System.out.println("Choose bet size " + ((MenuItem)e.getSource()).getText());
-                manager.setBetSize(Integer.parseInt(((MenuItem)e.getSource()).getText()));
-                renderScene(stage);
-            }
-        };
-
-        m1.setOnAction(event);
-        m2.setOnAction(event);
-        m3.setOnAction(event);
-        m4.setOnAction(event);
-        m5.setOnAction(event);
-
-        root.getChildren().add(m);
+        // choose bet button
+        if (!manager.isBetPlaced()) {
+            root.getChildren().add(betButton(stage));
+            root.getChildren().add(maxBetButton(stage));
+        }
 
         // display current bet
         Label bet = new Label("Current bet: " + manager.getBetSize());
@@ -128,6 +78,114 @@ public class VideoPokerApplication extends Application {
         stage.setTitle("Casino game - Video Poker");
         stage.setScene(new Scene(root, SCENE_LENGTH, SCENE_WIDTH));
         stage.show();
+    }
+
+    private MenuButton betButton(Stage stage) {
+        MenuButton m = new MenuButton("Choose bet size");
+
+        MenuItem m1 = new MenuItem("1");
+        MenuItem m2 = new MenuItem("2");
+        MenuItem m3 = new MenuItem("3");
+        MenuItem m4 = new MenuItem("4");
+        MenuItem m5 = new MenuItem("5");
+
+        m.getItems().add(m1);
+        m.getItems().add(m2);
+        m.getItems().add(m3);
+        m.getItems().add(m4);
+        m.getItems().add(m5);
+
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                playButtonSound();
+                manager.setBetSize(Integer.parseInt(((MenuItem)e.getSource()).getText()));
+                renderScene(stage);
+            }
+        };
+
+        m1.setOnAction(event);
+        m2.setOnAction(event);
+        m3.setOnAction(event);
+        m4.setOnAction(event);
+        m5.setOnAction(event);
+
+        return m;
+    }
+
+    private Button maxBetButton(Stage stage) {
+        Button b1 = new Button("Max bet (5)");
+        EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                playButtonSound();
+                manager.setBetSize(5);
+                renderScene(stage);
+            }
+        };
+        b1.setOnAction(event1);
+        return b1;
+    }
+
+    private Button playAgainButton(Stage stage) {
+        Button b1 = new Button("Play again");
+        EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                System.out.println("New round started");
+                manager.initializeNewRound();
+                renderScene(stage);
+                playButtonSound();
+            }
+        };
+        b1.setOnAction(event1);
+        return b1;
+    }
+
+    private Button confirmButton(Stage stage) {
+        Button b1 = new Button("Confirm delete");
+        EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                try {
+                    manager.removeSelectedCards();
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+                if (manager.playerWonRound()) {
+                    playWinSound();
+                } else {
+                    playLoseSound();
+                }
+
+                renderScene(stage);
+            }
+        };
+        b1.setOnAction(event1);
+        return b1;
+    }
+
+    private Button quitButton(Stage stage) {
+        Button b1 = new Button("Quit");
+        EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                playButtonSound();
+                MainMenu menu = new MainMenu();
+                menu.start(stage);
+            }
+        };
+        b1.setOnAction(event1);
+        return b1;
+    }
+
+    private HBox displayCards(Stage stage) {
+        HBox cards = new HBox();
+        for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
+            cards.getChildren().add(renderCard(stage, i));
+        }
+        return cards;
     }
 
     private StackPane renderBackOfCard() {
@@ -145,7 +203,7 @@ public class VideoPokerApplication extends Application {
             return renderBackOfCard();
         }
 
-        Image image = new Image(getClass().getResource(manager.getCurrentCards().get(index).getImagePath()).toExternalForm());
+        Image image = new Image(getClass().getResource(manager.getCurrentCards().get(index).getImagePathPoker()).toExternalForm());
 
         ImageView imageView = new ImageView(image);
 
@@ -171,7 +229,7 @@ public class VideoPokerApplication extends Application {
             Rectangle clickableArea = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
             clickableArea.setFill(javafx.scene.paint.Color.TRANSPARENT);
             clickableArea.setOnMouseClicked((event) -> {
-                System.out.println("You clicked on card " + (index + 1));
+                playButtonSound();
                 manager.selectCard(index);
                 renderScene(stage);
             });
@@ -179,6 +237,27 @@ public class VideoPokerApplication extends Application {
         }
 
         return pane;
+    }
+
+    private void playButtonSound() {
+        Path path = Paths.get("sounds", "buttonSound.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playLoseSound() {
+        Path path = Paths.get("sounds", "badCombinationPoker.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playWinSound() {
+        Path path = Paths.get("sounds", "goodCombinationPoker.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playSoundFromPath(Path path) {
+        Media sound = new Media(path.toUri().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
 
     public static void main(String[] args) {

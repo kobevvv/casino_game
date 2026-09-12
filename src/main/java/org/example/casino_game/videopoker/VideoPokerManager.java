@@ -41,6 +41,12 @@ public class VideoPokerManager {
     }
 
     public void setBetSize(int betSize) {
+        if (betSize > MAX_BETSIZE) {
+            throw new IllegalArgumentException("Bet size can't be greater than " + MAX_BETSIZE);
+        }
+        if (betSize > credits) {
+            throw new IllegalArgumentException("You don't have enough credits, you only have " + credits + " credits");
+        }
         this.betPlaced = true;
         this.betSize = betSize;
         this.credits -= betSize;
@@ -67,6 +73,10 @@ public class VideoPokerManager {
         return deckEvaluator.evaluate();
     }
 
+    public boolean playerWonRound() {
+        return getCurrentPayTable().multiplier > 0;
+    }
+
     public List<Card> getCurrentCards() {
         return List.of(currentCards);
     }
@@ -81,7 +91,7 @@ public class VideoPokerManager {
 
     public void removeSelectedCards() throws Exception {
         if (cardsSwapped) {
-            throw new Exception("You already draw new cards");
+            throw new Exception("You already drew new cards");
         }
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
             if (isCardSelected(i)) {
