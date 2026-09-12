@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
-import org.example.casino_game.MainMenu;
+import org.example.casino_game.StatsController;
 
 public class ShopApplication {
 

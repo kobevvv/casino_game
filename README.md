@@ -12,8 +12,8 @@ We're using Maven and the JavaFX library
 
 ### Layout: stats.txt (in order)
 
-- Coins
-- Trophies
-- XP-points
+- Line 0: Coins
+- Line 1: Trophies
+- Line 2: XP-points
 
 Images source: https://ci.itch.io/card-games-graphics-pack
