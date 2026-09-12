@@ -10,9 +10,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,7 +26,8 @@ public class MemoryApplication extends Application {
 
     private final static int SCENE_LENGTH = 900;
     private final static int SCENE_WIDTH = 750;
-    private final static int AMOUNT_OF_CARDS = 8;
+    private final static int AMOUNT_OF_CARDS = 24;
+    private final static int AANTAL_KOLOMMEN = 8;
     private ArrayList<MemoryCard> cards = new ArrayList<>();
     private int selectedCard1 = -1;
     private int selectedCard2 = -1;
@@ -33,23 +36,55 @@ public class MemoryApplication extends Application {
     private boolean wait = false;
 
     public void start(Stage stage){
+        MemoryCard jackClubs1 = new MemoryCard(11, Suit.CLUBS, false, false);
+        MemoryCard jackClubs2 = new MemoryCard(11, Suit.CLUBS, false, false);
         MemoryCard queenClubs1 = new MemoryCard(12, Suit.CLUBS, false, false);
         MemoryCard queenClubs2 = new MemoryCard(12, Suit.CLUBS, false, false);
         MemoryCard kingClubs1 = new MemoryCard(13, Suit.CLUBS, false, false);
         MemoryCard kingClubs2 = new MemoryCard(13, Suit.CLUBS, false, false);
+        MemoryCard jackSpade1 = new MemoryCard(11, Suit.SPADE, false, false);
+        MemoryCard jackSpade2 = new MemoryCard(11, Suit.SPADE, false, false);
         MemoryCard queenSpade1 = new MemoryCard(12, Suit.SPADE, false, false);
         MemoryCard queenSpade2 = new MemoryCard(12, Suit.SPADE, false, false);
         MemoryCard kingSpade1 = new MemoryCard(13, Suit.SPADE, false, false);
         MemoryCard kingSpade2 = new MemoryCard(13, Suit.SPADE, false, false);
+        MemoryCard jackDiamond1 = new MemoryCard(11, Suit.DIAMOND, false, false);
+        MemoryCard jackDiamond2 = new MemoryCard(11, Suit.DIAMOND, false, false);
+        MemoryCard queenDiamond1 = new MemoryCard(12, Suit.DIAMOND, false, false);
+        MemoryCard queenDiamond2 = new MemoryCard(12, Suit.DIAMOND, false, false);
+        MemoryCard kingDiamond1 = new MemoryCard(13, Suit.DIAMOND, false, false);
+        MemoryCard kingDiamond2 = new MemoryCard(13, Suit.DIAMOND, false, false);
+        MemoryCard jackHeart1 = new MemoryCard(11, Suit.HEART, false, false);
+        MemoryCard jackHeart2 = new MemoryCard(11, Suit.HEART, false, false);
+        MemoryCard queenHeart1 = new MemoryCard(12, Suit.HEART, false, false);
+        MemoryCard queenHeart2 = new MemoryCard(12, Suit.HEART, false, false);
+        MemoryCard kingHeart1 = new MemoryCard(13, Suit.HEART, false, false);
+        MemoryCard kingHeart2 = new MemoryCard(13, Suit.HEART, false, false);
 
+        cards.add(jackClubs1);
+        cards.add(jackClubs2);
         cards.add(queenClubs1);
         cards.add(queenClubs2);
         cards.add(kingClubs1);
         cards.add(kingClubs2);
+        cards.add(jackSpade1);
+        cards.add(jackSpade2);
         cards.add(queenSpade1);
         cards.add(queenSpade2);
         cards.add(kingSpade1);
         cards.add(kingSpade2);
+        cards.add(jackDiamond1);
+        cards.add(jackDiamond2);
+        cards.add(queenDiamond1);
+        cards.add(queenDiamond2);
+        cards.add(kingDiamond1);
+        cards.add(kingDiamond2);
+        cards.add(jackHeart1);
+        cards.add(jackHeart2);
+        cards.add(queenHeart1);
+        cards.add(queenHeart2);
+        cards.add(kingHeart1);
+        cards.add(kingHeart2);
 
         scrambleCards();
 
@@ -65,11 +100,22 @@ public class MemoryApplication extends Application {
         Label pointsLabel = new Label("¨Points: " + points);
         root.getChildren().add(pointsLabel);
 
-        HBox hbox = new HBox();
+        /*HBox hbox = new HBox();
         for (int i = 0; i < AMOUNT_OF_CARDS; i++) {
             hbox.getChildren().add(renderCard(stage, cards.get(i), i));
         }
-        root.getChildren().add(hbox);
+        root.getChildren().add(hbox);*/
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        for(int i = 0; i < AMOUNT_OF_CARDS; i++){
+            int rij = i / AANTAL_KOLOMMEN;
+            int kolom = i % AANTAL_KOLOMMEN;
+            grid.add(renderCard(stage, cards.get(i), i), kolom, rij);
+        }
+        root.getChildren().add(grid);
 
         root.setStyle("-fx-background-color: pink;");
 
@@ -86,12 +132,14 @@ public class MemoryApplication extends Application {
             cards.get(selectedCard2).setTurned(false);
             selectedCard1 = -1;
             selectedCard2 = -1;
-            try{
+            /*try{
                 Thread.sleep(2000);
+                System.out.println("AAN HET WACHTEN");
             } catch(InterruptedException e){
                 System.out.println("FOUT: DE DELAY IS ONDERBROKEN");
                 Thread.currentThread().interrupt();
             }
+            System.out.println("WACHTEN GEDAAN");*/
         }
     }
 
@@ -134,6 +182,8 @@ public class MemoryApplication extends Application {
                     wait = false;
                     selectedCard1 = -1;
                     selectedCard2 = -1;
+                    selectedCard1 = index;
+                    card.setTurned(true);
                 }
             }
             renderScene(stage);
