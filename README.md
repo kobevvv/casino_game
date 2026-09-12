@@ -10,4 +10,10 @@ We're using Maven and the JavaFX library
 - memory
 - roulette
 
+### Layout: stats.txt (in order)
+
+- Coins
+- Trophies
+- XP-points
+
 Images source: https://ci.itch.io/card-games-graphics-pack
