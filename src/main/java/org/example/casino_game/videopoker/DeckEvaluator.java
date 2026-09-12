@@ -1,5 +1,8 @@
 package org.example.casino_game.videopoker;
 
+import org.example.casino_game.Card;
+import org.example.casino_game.Suit;
+
 import java.util.*;
 
 import static org.example.casino_game.videopoker.PayTable.*;
@@ -68,14 +71,14 @@ public class DeckEvaluator {
             if (count == 0) {
                 // first card
                 count++;
-                max = card.number();
-            } else if (card.number() == max + 1) {
+                max = card.getNumber();
+            } else if (card.getNumber() == max + 1) {
                 // current card is one more than the previous
                 count++;
                 max++;
-            } else if (card.number() > max + 1) {
+            } else if (card.getNumber() > max + 1) {
                 count = 1;
-                max = card.number();
+                max = card.getNumber();
             }
         }
         return count >= 5;
@@ -108,7 +111,7 @@ public class DeckEvaluator {
      */
 
     private void sortByNumber() {
-        deck.sort(Comparator.comparing(Card::number));
+        deck.sort(Comparator.comparing(Card::getNumber));
     }
 
     private int maxOfSameSuit() {
@@ -142,7 +145,7 @@ public class DeckEvaluator {
     private HashMap<Integer, Integer> mapOfNumbers() {
         HashMap<Integer, Integer> map = new HashMap<>();
         for (Card card : deck) {
-            map.put(card.number(), map.getOrDefault(card.number(), 0) + 1);
+            map.put(card.getNumber(), map.getOrDefault(card.getNumber(), 0) + 1);
         }
         return map;
     }
@@ -150,7 +153,7 @@ public class DeckEvaluator {
     private HashMap<Suit, Integer> mapOfSuits() {
         HashMap<Suit, Integer> map = new HashMap<>();
         for (Card card : deck) {
-            map.put(card.suit(), map.getOrDefault(card.suit(), 0) + 1);
+            map.put(card.getSuit(), map.getOrDefault(card.getSuit(), 0) + 1);
         }
         return map;
     }

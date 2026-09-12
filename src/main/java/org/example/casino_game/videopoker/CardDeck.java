@@ -1,5 +1,8 @@
 package org.example.casino_game.videopoker;
 
+import org.example.casino_game.Card;
+import org.example.casino_game.Suit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

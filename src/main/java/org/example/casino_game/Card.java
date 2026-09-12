@@ -37,18 +37,12 @@ public class Card {
         Card c = (Card) obj;
         return number == c.number && suit == c.suit;
     }
-}
 
-/*public record Card(int number, Suit suit) {
-
-    public String getImagePath() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("/images/cards/card_");
-        sb.append(suit.name().toLowerCase());
-        sb.append("_");
-        sb.append(number);
-        sb.append(".png");
-        return sb.toString();
+    public boolean hasSameSuit(Card card) {
+        return suit == card.suit;
     }
 
-}*/
+    public boolean hasSameNumber(int number) {
+        return number == this.number;
+    }
+}

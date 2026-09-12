@@ -1,5 +1,7 @@
 package org.example.casino_game.videopoker;
 
+import org.example.casino_game.Card;
+import org.example.casino_game.Suit;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
