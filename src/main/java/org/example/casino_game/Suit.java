@@ -1,4 +1,4 @@
-package org.example.casino_game.videopoker;
+package org.example.casino_game;
 
 public enum Suit {
     CLUBS,

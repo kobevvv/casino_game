@@ -7,7 +7,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+
 import org.example.casino_game.videopoker.VideoPokerApplication;
+import org.example.casino_game.memory.MemoryApplication;
 
 public class MainMenu extends Application {
 
@@ -31,6 +33,8 @@ public class MainMenu extends Application {
             public void handle(ActionEvent e)
             {
                 System.out.println("Playing memory");
+                MemoryApplication memoryApplication = new MemoryApplication();
+                memoryApplication.start(s);
                 // TODO create and start memory application
             }
         };

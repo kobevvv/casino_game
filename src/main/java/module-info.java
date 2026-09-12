@@ -13,6 +13,7 @@ module org.example.casino_game {
     requires java.desktop;
 
     opens org.example.casino_game to javafx.fxml;
+    opens org.example.casino_game.memory to javafx.graphics;
     exports org.example.casino_game;
     exports org.example.casino_game.videopoker;
 }
