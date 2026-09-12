@@ -67,6 +67,10 @@ public class VideoPokerManager {
         return deckEvaluator.evaluate();
     }
 
+    public boolean playerWonRound() {
+        return getCurrentPayTable().multiplier > 0;
+    }
+
     public List<Card> getCurrentCards() {
         return List.of(currentCards);
     }

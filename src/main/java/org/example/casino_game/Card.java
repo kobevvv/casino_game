@@ -45,4 +45,18 @@ public class Card {
     public boolean hasSameNumber(int number) {
         return number == this.number;
     }
+
+    public String getImagePathPoker() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("/images/cards/card_");
+        sb.append(suit.name().toLowerCase());
+        sb.append("_");
+        if (number == 14) {
+            sb.append(1);
+        } else {
+            sb.append(number);
+        }
+        sb.append(".png");
+        return sb.toString();
+    }
 }

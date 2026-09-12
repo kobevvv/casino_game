@@ -11,6 +11,7 @@ module org.example.casino_game {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires javafx.media;
 
     opens org.example.casino_game to javafx.fxml;
     opens org.example.casino_game.memory to javafx.graphics;

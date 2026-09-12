@@ -10,10 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.example.casino_game.Card;
-import org.example.casino_game.Suit;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.example.casino_game.videopoker.VideoPokerManager.AMOUNT_OF_CARDS;
 
@@ -60,6 +63,11 @@ public class VideoPokerApplication extends Application {
                         System.out.println(ex.getMessage());
                     }
                     renderScene(stage);
+                    if (manager.playerWonRound()) {
+                        playWinSound();
+                    } else {
+                        playLoseSound();
+                    }
                 }
             };
             b1.setOnAction(event1);
@@ -75,6 +83,7 @@ public class VideoPokerApplication extends Application {
                     System.out.println("New round started");
                     manager.initializeNewRound();
                     renderScene(stage);
+                    playButtonSound();
                 }
             };
             b1.setOnAction(event1);
@@ -104,6 +113,7 @@ public class VideoPokerApplication extends Application {
                 System.out.println("Choose bet size " + ((MenuItem)e.getSource()).getText());
                 manager.setBetSize(Integer.parseInt(((MenuItem)e.getSource()).getText()));
                 renderScene(stage);
+                playButtonSound();
             }
         };
 
@@ -145,7 +155,7 @@ public class VideoPokerApplication extends Application {
             return renderBackOfCard();
         }
 
-        Image image = new Image(getClass().getResource(manager.getCurrentCards().get(index).getImagePath()).toExternalForm());
+        Image image = new Image(getClass().getResource(manager.getCurrentCards().get(index).getImagePathPoker()).toExternalForm());
 
         ImageView imageView = new ImageView(image);
 
@@ -174,11 +184,33 @@ public class VideoPokerApplication extends Application {
                 System.out.println("You clicked on card " + (index + 1));
                 manager.selectCard(index);
                 renderScene(stage);
+                playButtonSound();
             });
             pane.getChildren().add(clickableArea);
         }
 
         return pane;
+    }
+
+    private void playButtonSound() {
+        Path path = Paths.get("sounds", "buttonSound.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playLoseSound() {
+        Path path = Paths.get("sounds", "badCombinationPoker.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playWinSound() {
+        Path path = Paths.get("sounds", "goodCombinationPoker.mp3").toAbsolutePath();
+        playSoundFromPath(path);
+    }
+
+    private void playSoundFromPath(Path path) {
+        Media sound = new Media(path.toUri().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
 
     public static void main(String[] args) {
