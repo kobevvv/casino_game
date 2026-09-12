@@ -1,5 +1,6 @@
 package org.example.casino_game.videopoker;
 
+import javafx.scene.layout.VBox;
 import org.example.casino_game.Card;
 
 import java.util.ArrayList;
@@ -113,8 +114,8 @@ public class VideoPokerManager {
         updateCredit();
     }
 
-    public String getPayTable() {
-        return getCurrentPayTable().payTableString();
+    public VBox getPayTable() {
+        return getCurrentPayTable().payTableBox();
     }
 
     protected void updateCredit() {

@@ -36,15 +36,13 @@ public class VideoPokerApplication extends Application {
         renderScene(stage);
     }
 
-    // TODO simplify this function
     private void renderScene(Stage stage) {
         VBox root = new VBox();
 
         root.getChildren().add(quitButton(stage));
 
         // display paytable
-        Label paytableLabel = new Label(manager.getPayTable());
-        root.getChildren().add(paytableLabel);
+        root.getChildren().add(manager.getPayTable());
 
         // display cards
         root.getChildren().add(displayCards(stage));

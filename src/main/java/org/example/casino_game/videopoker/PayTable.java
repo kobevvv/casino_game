@@ -1,6 +1,15 @@
 package org.example.casino_game.videopoker;
 
-import java.util.List;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
 import java.util.function.Predicate;
 
 /**
@@ -28,25 +37,63 @@ public enum PayTable {
         this.name = name;
     }
 
-    public String payTableString() {
-        int maxNameLength = 0;
+    public VBox payTableBox() {
+        VBox vBox = new VBox(8);
+        vBox.setPadding(new Insets(14));
+        vBox.setStyle(
+                "-fx-background-color: rgba(255, 255, 255, 0.88);" +
+                "-fx-border-color: #8b5a2b;" +
+                "-fx-border-width: 2;" +
+                "-fx-border-radius: 6;" +
+                "-fx-background-radius: 6;" +
+                "-fx-font-family: 'Roboto';"
+        );
+
+        Label title = new Label("Pay Table");
+        title.setFont(Font.font("Roboto", FontWeight.BOLD, 22));
+        title.setTextFill(Color.DARKSLATEBLUE);
+
+        GridPane table = new GridPane();
+        table.setHgap(24);
+        table.setVgap(6);
+        table.setAlignment(Pos.CENTER_LEFT);
+
+        ColumnConstraints handColumn = new ColumnConstraints();
+        handColumn.setMinWidth(220);
+        ColumnConstraints payoutColumn = new ColumnConstraints();
+        payoutColumn.setMinWidth(80);
+        table.getColumnConstraints().addAll(handColumn, payoutColumn);
+
+        Label handHeader = new Label("Hand");
+        Label payoutHeader = new Label("Payout");
+        handHeader.setFont(Font.font("Roboto", FontWeight.BOLD, 16));
+        payoutHeader.setFont(Font.font("Roboto", FontWeight.BOLD, 16));
+        handHeader.setTextFill(Color.DARKSLATEGRAY);
+        payoutHeader.setTextFill(Color.DARKSLATEGRAY);
+        table.add(handHeader, 0, 0);
+        table.add(payoutHeader, 1, 0);
+
+        int row = 1;
         for (PayTable payTable : PayTable.values()) {
-            maxNameLength = Math.max(maxNameLength, payTable.name.length());
+            boolean isCurrentPayTable = payTable == this;
+
+            Label hand = new Label((isCurrentPayTable ? "> " : "  ") + payTable.name);
+            Label payout = new Label(payTable.multiplier + "x");
+            FontWeight weight = isCurrentPayTable ? FontWeight.BOLD : FontWeight.NORMAL;
+
+            hand.setFont(Font.font("Roboto", weight, 16));
+            payout.setFont(Font.font("Roboto", weight, 16));
+
+            Color textColor = isCurrentPayTable ? Color.FIREBRICK : Color.BLACK;
+            hand.setTextFill(textColor);
+            payout.setTextFill(textColor);
+
+            table.add(hand, 0, row);
+            table.add(payout, 1, row);
+            row++;
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("| %-" + maxNameLength + "s\t| Multiplier |%n", "Hand"));
-        builder.append(String.format("| %-" + maxNameLength + "s\t| --------- |%n", "---"));
-
-        for (PayTable payTable : PayTable.values()) {
-            String handName = payTable == this ? "\t > \t" + payTable.name : payTable.name;
-            builder.append(String.format("| %-" + maxNameLength + "s\t| %d |%n", handName, payTable.multiplier));
-        }
-
-        return builder.toString();
-    }
-
-    public String getName() {
-        return name;
+        vBox.getChildren().addAll(title, table);
+        return vBox;
     }
 }
